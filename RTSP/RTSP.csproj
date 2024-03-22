@@ -17,6 +17,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RootNamespace>Rtsp</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
  
  

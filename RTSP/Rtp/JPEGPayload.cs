@@ -312,31 +312,17 @@ namespace Rtsp.Rtp
             int qtablesCount = qtlen > 64 ? 2 : 1;
             return 485 + qtablesCount * 5 + qtlen + (dri > 0 ? 6 : 0);
         }
+
+        // MARKER_SOI, MARKER_APP_FIRST, 0x0010, header...
+        static readonly byte[] jpeg_header = [0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, (byte)'J', (byte)'F', (byte)'I', (byte)'F',
+            0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, ];
         private void FillJpegHeader(Span<byte> buffer, int type, int width, int height, int dri)
         {
             int qtablesCount = _quantizationTablesLength > 64 ? 2 : 1;
-            int offset = 0;
 
-            BinaryPrimitives.WriteUInt16BigEndian(buffer[offset..], MARKER_SOI);
-            offset += 2;
-            BinaryPrimitives.WriteUInt16BigEndian(buffer[offset..], MARKER_APP_FIRST);
-            offset += 2;
-            BinaryPrimitives.WriteUInt16BigEndian(buffer[offset..], 16);
-            offset += 2;
-            buffer[offset++] = (byte)'J';
-            buffer[offset++] = (byte)'F';
-            buffer[offset++] = (byte)'I';
-            buffer[offset++] = (byte)'F';
-            buffer[offset++] = 0x00;
-            buffer[offset++] = 0x01;
-            buffer[offset++] = 0x01;
-            buffer[offset++] = 0x00;
-            buffer[offset++] = 0x00;
-            buffer[offset++] = 0x01;
-            buffer[offset++] = 0x00;
-            buffer[offset++] = 0x01;
-            buffer[offset++] = 0x00;
-            buffer[offset++] = 0x00;
+            var header = new ReadOnlySpan<byte>(jpeg_header);
+            header.CopyTo(buffer);
+            int offset = header.Length;
 
             if (dri > 0)
             {

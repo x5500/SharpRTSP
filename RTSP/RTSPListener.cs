@@ -1,4 +1,6 @@
-﻿namespace Rtsp
+﻿#pragma warning disable MA0051 // Method is too long
+
+namespace Rtsp
 {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
@@ -272,9 +274,9 @@
             if (_transport.Connected)
                 return;
 
+            var ct = _cancelationTokenSource?.Token ?? CancellationToken.None;
             // If it is not connected listenthread should have die.
-            _mainTask?.Wait();
-
+            _mainTask?.Wait(ct);
             _stream?.Dispose();
 
             // reconnect 
@@ -582,7 +584,7 @@
 
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
@@ -598,3 +600,4 @@
         #endregion
     }
 }
+#pragma warning restore MA0051 // Method is too long
